@@ -1,4 +1,5 @@
 import {
+  GithubAuthProvider,
   GoogleAuthProvider,
   getAuth,
   signInWithPopup,
@@ -13,10 +14,11 @@ const Login = () => {
 
   const auth = getAuth(app);
   console.log(app);
-  const provider = new GoogleAuthProvider();
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
 
   const handleGoogleSignIn = () => {
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleProvider)
       .then((result) => {
         const signedInUser = result.user;
         toast.success("Logged in Successfully");
@@ -28,7 +30,7 @@ const Login = () => {
       });
   };
 
-  const handleGoogleSignOut = () => {
+  const handleSignOut = () => {
     signOut(auth)
       .then((result) => {
         console.log(result);
@@ -40,13 +42,29 @@ const Login = () => {
       });
   };
 
+  const handleGithubSignIn = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((result) => {
+        console.log(result);
+        const loggedUser=result.user
+        setUser(loggedUser)
+        toast.success("Successfully logged in with Github");
+      })
+      .catch((error) => {
+        console.log("error", error.message);
+      });
+  };
+
   return (
     <div>
       <h3>Please Log In</h3>
       {user ? (
-        <button onClick={handleGoogleSignOut}> Logout</button>
+        <button onClick={handleSignOut}> Logout</button>
       ) : (
-        <button onClick={handleGoogleSignIn}> Login</button>
+        <>
+          <button onClick={handleGoogleSignIn}> Google Login</button>
+          <button onClick={handleGithubSignIn}> Github Login</button>
+        </>
       )}
 
       {user && (
